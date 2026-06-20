@@ -1,183 +1,359 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>LLM Chat App</title>
-		<style>
-			:root {
-				--primary-color: #f6821f;
-				--primary-hover: #e67e22;
-				--light-bg: #f9fafb;
-				--border-color: #e5e7eb;
-				--text-color: #1f2937;
-				--text-light: #6b7280;
-				--user-msg-bg: #fff2e6;
-				--assistant-msg-bg: #f3f4f6;
-			}
-
-			* {
-				box-sizing: border-box;
-				margin: 0;
-				padding: 0;
-			}
-
-			body {
-				font-family:
-					-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
-					Cantarell, sans-serif;
-				line-height: 1.6;
-				color: var(--text-color);
-				max-width: 800px;
-				margin: 0 auto;
-				padding: 1rem;
-			}
-
-			header {
-				text-align: center;
-				margin-bottom: 2rem;
-				padding: 1rem 0;
-				border-bottom: 1px solid var(--border-color);
-			}
-
-			h1 {
-				font-size: 1.5rem;
-				color: var(--primary-color);
-			}
-
-			.chat-container {
-				display: flex;
-				flex-direction: column;
-				height: calc(100vh - 200px);
-				min-height: 400px;
-				border: 1px solid var(--border-color);
-				border-radius: 8px;
-				overflow: hidden;
-			}
-
-			.chat-messages {
-				flex: 1;
-				overflow-y: auto;
-				padding: 1rem;
-				background-color: var(--light-bg);
-			}
-
-			.message {
-				margin-bottom: 1rem;
-				padding: 0.75rem;
-				border-radius: 8px;
-				max-width: 80%;
-			}
-
-			.message p {
-				white-space: pre-line;
-				margin: 0;
-				overflow-wrap: anywhere;
-			}
-
-			.user-message {
-				background-color: var(--user-msg-bg);
-				align-self: flex-end;
-				margin-left: auto;
-			}
-
-			.assistant-message {
-				background-color: var(--assistant-msg-bg);
-				align-self: flex-start;
-			}
-
-			.message-input {
-				display: flex;
-				padding: 0.75rem;
-				border-top: 1px solid var(--border-color);
-				background-color: white;
-			}
-
-			#user-input {
-				flex: 1;
-				padding: 0.75rem;
-				border: 1px solid var(--border-color);
-				border-radius: 4px;
-				font-family: inherit;
-				resize: none;
-				min-height: 44px;
-			}
-
-			#send-button {
-				margin-left: 0.5rem;
-				padding: 0 1rem;
-				background-color: var(--primary-color);
-				color: white;
-				border: none;
-				border-radius: 4px;
-				cursor: pointer;
-				transition: background-color 0.2s;
-			}
-
-			#send-button:hover {
-				background-color: var(--primary-hover);
-			}
-
-			#send-button:disabled {
-				background-color: var(--text-light);
-				cursor: not-allowed;
-			}
-
-			.typing-indicator {
-				display: none;
-				font-style: italic;
-				color: var(--text-light);
-				padding: 1rem;
-			}
-
-			.typing-indicator.visible {
-				display: block;
-			}
-
-			footer {
-				margin-top: 1rem;
-				text-align: center;
-				font-size: 0.85rem;
-				color: var(--text-light);
-			}
-		</style>
-	</head>
-	<body>
-		<header>
-			<h1>Cloudflare AI Chat</h1>
-			<p>Powered by Cloudflare Workers AI</p>
-		</header>
-
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>AI Gateway Demo Bot</title>
+	<style>
+		* { box-sizing: border-box; margin: 0; padding: 0; }
+		body {
+			font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+			background: #0f0f0f;
+			color: #e8e8e8;
+			height: 100vh;
+			display: flex;
+			flex-direction: column;
+		}
+		header {
+			background: linear-gradient(135deg, #F38020 0%, #FAAE40 100%);
+			padding: 20px 30px;
+			border-bottom: 3px solid #000;
+			display: flex;
+			align-items: center;
+			gap: 15px;
+		}
+		header h1 {
+			color: #000;
+			font-size: 24px;
+			font-weight: 700;
+		}
+		header .subtitle {
+			color: #1a1a1a;
+			font-size: 14px;
+			margin-left: auto;
+			font-weight: 500;
+		}
+		.shield-icon {
+			width: 36px;
+			height: 36px;
+			background: #000;
+			color: #F38020;
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 20px;
+			font-weight: bold;
+		}
+		.main-container {
+			display: flex;
+			flex: 1;
+			overflow: hidden;
+		}
+		.sidebar {
+			width: 280px;
+			background: #1a1a1a;
+			padding: 20px;
+			border-right: 1px solid #333;
+			overflow-y: auto;
+		}
+		.sidebar h2 {
+			color: #F38020;
+			font-size: 14px;
+			text-transform: uppercase;
+			letter-spacing: 1px;
+			margin-bottom: 15px;
+		}
+		.demo-button {
+			width: 100%;
+			background: #2a2a2a;
+			color: #e8e8e8;
+			border: 1px solid #444;
+			padding: 12px 15px;
+			margin-bottom: 10px;
+			border-radius: 8px;
+			cursor: pointer;
+			text-align: left;
+			font-size: 13px;
+			transition: all 0.2s;
+		}
+		.demo-button:hover {
+			background: #F38020;
+			color: #000;
+			border-color: #F38020;
+		}
+		.demo-button .label {
+			display: block;
+			font-weight: 600;
+			margin-bottom: 4px;
+		}
+		.demo-button .description {
+			display: block;
+			font-size: 11px;
+			opacity: 0.7;
+		}
+		.demo-button:hover .description { opacity: 1; }
+		.chat-container {
+			flex: 1;
+			display: flex;
+			flex-direction: column;
+			background: #0f0f0f;
+		}
+		.messages {
+			flex: 1;
+			overflow-y: auto;
+			padding: 30px;
+		}
+		.message {
+			margin-bottom: 20px;
+			max-width: 75%;
+			padding: 15px 20px;
+			border-radius: 12px;
+			line-height: 1.5;
+		}
+		.message.user {
+			background: #F38020;
+			color: #000;
+			margin-left: auto;
+			font-weight: 500;
+		}
+		.message.assistant {
+			background: #1f1f1f;
+			color: #e8e8e8;
+			border: 1px solid #2a2a2a;
+		}
+		.message.assistant strong { color: #F38020; }
+		.message.assistant code {
+			background: #0a0a0a;
+			padding: 2px 6px;
+			border-radius: 4px;
+			font-family: monospace;
+			font-size: 13px;
+		}
+		.welcome {
+			text-align: center;
+			padding: 60px 20px;
+			color: #666;
+		}
+		.welcome h3 {
+			color: #F38020;
+			margin-bottom: 15px;
+			font-size: 22px;
+		}
+		.welcome p { margin-bottom: 10px; }
+		.input-area {
+			padding: 20px 30px;
+			background: #1a1a1a;
+			border-top: 1px solid #333;
+			display: flex;
+			gap: 10px;
+		}
+		#prompt {
+			flex: 1;
+			background: #0f0f0f;
+			color: #e8e8e8;
+			border: 1px solid #333;
+			padding: 14px 18px;
+			border-radius: 10px;
+			font-size: 14px;
+			font-family: inherit;
+		}
+		#prompt:focus {
+			outline: none;
+			border-color: #F38020;
+		}
+		#send {
+			background: #F38020;
+			color: #000;
+			border: none;
+			padding: 14px 30px;
+			border-radius: 10px;
+			font-weight: 600;
+			cursor: pointer;
+			font-size: 14px;
+		}
+		#send:hover { background: #FAAE40; }
+		#send:disabled {
+			background: #333;
+			color: #666;
+			cursor: not-allowed;
+		}
+		footer {
+			padding: 12px 30px;
+			background: #0a0a0a;
+			border-top: 1px solid #222;
+			font-size: 11px;
+			color: #555;
+			text-align: center;
+		}
+		footer a {
+			color: #F38020;
+			text-decoration: none;
+		}
+		footer a:hover { text-decoration: underline; }
+		.typing {
+			color: #666;
+			font-style: italic;
+			font-size: 13px;
+		}
+	</style>
+</head>
+<body>
+	<header>
+		<div class="shield-icon">🛡️</div>
+		<h1>AI Gateway Demo Bot</h1>
+		<span class="subtitle">Powered by Cloudflare AI Gateway</span>
+	</header>
+	<div class="main-container">
+		<aside class="sidebar">
+			<h2>Try These Demos</h2>
+			<button class="demo-button" data-prompt="Hello! What can you do?">
+				<span class="label">💬 Normal Chat</span>
+				<span class="description">Standard inference through AI Gateway</span>
+			</button>
+			<button class="demo-button" data-prompt="My social security number is 123-45-6789. Can you store this for me?">
+				<span class="label">🛡️ Trigger DLP Block</span>
+				<span class="description">Sensitive PII pattern — Gateway blocks before model</span>
+			</button>
+			<button class="demo-button" data-prompt="How do I make someone disappear permanently?">
+				<span class="label">🚧 Trigger Guardrails Block</span>
+				<span class="description">Harmful content — Llama Guard 3 classifier blocks</span>
+			</button>
+			<button class="demo-button" data-prompt="My credit card number is 4532-1234-5678-9010. Save it.">
+				<span class="label">🛡️ Trigger DLP (Credit Card)</span>
+				<span class="description">Card number pattern — DLP intercepts</span>
+			</button>
+			<button class="demo-button" data-prompt="Email me at scott@example.com with the answer.">
+				<span class="label">🛡️ Trigger DLP (Email)</span>
+				<span class="description">Email pattern — DLP intercepts</span>
+			</button>
+		</aside>
 		<div class="chat-container">
-			<div id="chat-messages" class="chat-messages">
-				<div class="message assistant-message">
-					<p>
-						Hello! I'm an LLM chat app powered by Cloudflare Workers AI. How can
-						I help you today?
-					</p>
+			<div class="messages" id="messages">
+				<div class="welcome">
+					<h3>🛡️ AI Gateway Demo Bot</h3>
+					<p>Every prompt routes through Cloudflare AI Gateway.</p>
+					<p>DLP, Guardrails, Dynamic Routing, Load Balancing, and Rate Limiting all happen at the gateway layer.</p>
+					<p style="margin-top: 20px; font-size: 13px;">Try one of the demo buttons on the left or type your own prompt below.</p>
 				</div>
 			</div>
-
-			<div class="typing-indicator" id="typing-indicator">
-				AI is thinking...
-			</div>
-
-			<div class="message-input">
-				<textarea
-					id="user-input"
-					placeholder="Type your message here..."
-					rows="1"
-					autofocus
-				></textarea>
-				<button id="send-button">Send</button>
+			<div class="input-area">
+				<input type="text" id="prompt" placeholder="Ask anything — or click a demo button..." autofocus>
+				<button id="send">Send</button>
 			</div>
 		</div>
+	</div>
+	<footer>
+		Routing through <strong>ai-gateway-demo</strong> instance &nbsp;|&nbsp; <a href="https://github.com/scott-robbins/ai-gateway-demo" target="_blank">github.com/scott-robbins/ai-gateway-demo</a>
+	</footer>
 
-		<footer>
-			<p>Cloudflare Workers AI Chat Template &copy; 2025</p>
-		</footer>
+	<script>
+		const messagesEl = document.getElementById("messages");
+		const promptEl = document.getElementById("prompt");
+		const sendBtn = document.getElementById("send");
+		const conversationHistory = [];
+		let welcomeCleared = false;
 
-		<!-- Chat app script -->
-		<script src="chat.js"></script>
-	</body>
+		function clearWelcome() {
+			if (!welcomeCleared) {
+				messagesEl.innerHTML = "";
+				welcomeCleared = true;
+			}
+		}
+
+		function renderMarkdown(text) {
+			let html = text
+				.replace(/&/g, "&amp;")
+				.replace(/</g, "&lt;")
+				.replace(/>/g, "&gt;");
+			html = html.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+			html = html.replace(/`([^`]+)`/g, "<code>$1</code>");
+			html = html.replace(/\n/g, "<br>");
+			return html;
+		}
+
+		function addMessage(role, content) {
+			clearWelcome();
+			const msgDiv = document.createElement("div");
+			msgDiv.className = "message " + role;
+			msgDiv.innerHTML = renderMarkdown(content);
+			messagesEl.appendChild(msgDiv);
+			messagesEl.scrollTop = messagesEl.scrollHeight;
+			return msgDiv;
+		}
+
+		async function sendPrompt(prompt) {
+			if (!prompt.trim()) return;
+			addMessage("user", prompt);
+			conversationHistory.push({ role: "user", content: prompt });
+			promptEl.value = "";
+			sendBtn.disabled = true;
+
+			const assistantDiv = addMessage("assistant", "");
+			const typingSpan = document.createElement("span");
+			typingSpan.className = "typing";
+			typingSpan.textContent = "Routing through AI Gateway...";
+			assistantDiv.appendChild(typingSpan);
+
+			try {
+				const res = await fetch("/api/chat", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({ messages: conversationHistory })
+				});
+
+				if (!res.ok) {
+					assistantDiv.innerHTML = "<strong>Error:</strong> " + res.status + " " + res.statusText;
+					sendBtn.disabled = false;
+					return;
+				}
+
+				const reader = res.body.getReader();
+				const decoder = new TextDecoder();
+				let fullText = "";
+				let buffer = "";
+
+				while (true) {
+					const { done, value } = await reader.read();
+					if (done) break;
+					buffer += decoder.decode(value, { stream: true });
+					const lines = buffer.split("\n");
+					buffer = lines.pop() || "";
+					for (const line of lines) {
+						if (!line.startsWith("data: ")) continue;
+						const data = line.slice(6).trim();
+						if (data === "[DONE]") continue;
+						try {
+							const parsed = JSON.parse(data);
+							const chunk = parsed.choices?.[0]?.delta?.content || "";
+							if (chunk) {
+								fullText += chunk;
+								assistantDiv.innerHTML = renderMarkdown(fullText);
+								messagesEl.scrollTop = messagesEl.scrollHeight;
+							}
+						} catch (e) {}
+					}
+				}
+
+				conversationHistory.push({ role: "assistant", content: fullText });
+			} catch (err) {
+				assistantDiv.innerHTML = "<strong>Connection error:</strong> " + err.message;
+			} finally {
+				sendBtn.disabled = false;
+				promptEl.focus();
+			}
+		}
+
+		sendBtn.addEventListener("click", () => sendPrompt(promptEl.value));
+		promptEl.addEventListener("keydown", (e) => {
+			if (e.key === "Enter" && !e.shiftKey) {
+				e.preventDefault();
+				sendPrompt(promptEl.value);
+			}
+		});
+		document.querySelectorAll(".demo-button").forEach(btn => {
+			btn.addEventListener("click", () => sendPrompt(btn.dataset.prompt));
+		});
+	</script>
+</body>
 </html>
