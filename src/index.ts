@@ -191,13 +191,14 @@ async function handleChatRequest(
 				}
 
 				return new Response(buildSSEChunk(blockContent), {
-    				headers: {
-        				"content-type": "text/event-stream; charset=utf-8",
-        				"cache-control": "no-cache",
-        				connection: "keep-alive",
-        				"x-gateway-block": "true",
-    			},
-			});
+					headers: {
+						"content-type": "text/event-stream; charset=utf-8",
+						"cache-control": "no-cache",
+						connection: "keep-alive",
+						"x-gateway-block": "true",
+					},
+				});
+			}
 
 			// Non-security errors fall through to generic error response
 			return new Response(
