@@ -18,8 +18,7 @@ const AI_GATEWAY_ENDPOINT = "https://gateway.ai.cloudflare.com/v1/" + AI_GATEWAY
 
 const DEFAULT_MODEL = "workers-ai/@cf/meta/llama-3.1-8b-instruct-fp8";
 
-const SYSTEM_PROMPT =
-	"You are the AI Gateway Demo Bot. You are running on Cloudflare Workers and routing all requests through Cloudflare AI Gateway. You demonstrate AI Gateway capabilities including DLP, Guardrails, Dynamic Routing, Load Balancing, and Rate Limiting. Be helpful, concise, and friendly.";
+const SYSTEM_PROMPT = `You are a helpful AI assistant. Answer the user's questions naturally and concisely. Do not mention Cloudflare, AI Gateway, or any specific platform unless the user directly asks about them. Just be a normal helpful chatbot.`;
 
 // Pattern detection for differentiating DLP vs Guardrails block reasons
 function classifyPromptIntent(prompt: string): "dlp" | "guardrails" | "unknown" {
