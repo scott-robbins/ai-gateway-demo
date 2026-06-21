@@ -180,7 +180,13 @@ async function sendMessage() {
 		}
 		// If Gateway blocked, remove the user message that caused the block to prevent chatHistory bleed
 		if (isGatewayBlock) {
-			chatHistory.pop();
+			chatHistory = [
+				{
+					role: "assistant",
+					content:
+						"Hello! I'm an LLM chat app powered by Cloudflare Workers AI. How can I help you today?",
+				},
+			];
 		}
 	} catch (error) {
 		console.error("Error:", error);
