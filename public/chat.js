@@ -93,6 +93,7 @@ async function sendMessage() {
 		if (!response.body) {
 			throw new Error("Response body is null");
 		}
+		const isGatewayBlock = response.headers.get("x-gateway-block") === "true";
 
 		// Process streaming response
 		const reader = response.body.getReader();
@@ -173,9 +174,13 @@ async function sendMessage() {
 			}
 		}
 
-		// Add completed response to chat history
-		if (responseText.length > 0) {
+		// Add completed response to chat history (skip if Gateway blocked)
+		if (responseText.length > 0 && !isGatewayBlock) {
 			chatHistory.push({ role: "assistant", content: responseText });
+		}
+		// If Gateway blocked, remove the user message that caused the block to prevent chatHistory bleed
+		if (isGatewayBlock) {
+			chatHistory.pop();
 		}
 	} catch (error) {
 		console.error("Error:", error);
