@@ -21,7 +21,7 @@ const DEFAULT_MODEL = "workers-ai/@cf/meta/llama-3.1-8b-instruct-fp8";
 const SYSTEM_PROMPT = `You are a helpful AI assistant. Answer the user's questions naturally and concisely. Do not mention Cloudflare, AI Gateway, or any specific platform unless the user directly asks about them. Just be a normal helpful chatbot.`;
 
 // Pattern detection for differentiating DLP vs Guardrails block reasons
-function classifyPromptIntent(prompt: string): "dlp" | "guardrails" | "unknown" {
+function classifyPromptIntent(prompt: string): "dlp" | "guardrails" | "injection" | "unknown" {
 	// DLP patterns - sensitive data formats
 	const ssnPattern = /\b\d{3}-\d{2}-\d{4}\b/;
 	const creditCardPattern = /\b(?:\d[ -]*?){13,19}\b/;
@@ -39,6 +39,18 @@ function classifyPromptIntent(prompt: string): "dlp" | "guardrails" | "unknown" 
 		"illegal drugs", "make drugs", "hack into", "steal"
 	];
 	const lowerPrompt = prompt.toLowerCase();
+	const injectionPatterns = [
+		"ignore all previous instructions",
+		"ignore previous instructions",
+		"developer mode",
+		"reveal your system prompt",
+		"reveal your internal",
+		"you are now in",
+		"no restrictions"
+	];
+	if (injectionPatterns.some(p => lowerPrompt.includes(p))) {
+		return "injection";
+	}
 	if (harmfulKeywords.some(kw => lowerPrompt.includes(kw))) {
 		return "guardrails";
 	}
@@ -71,6 +83,20 @@ function buildGuardrailsBlockResponse(): string {
 		"**ACTION TAKEN:** Request blocked — model was never invoked.",
 		"",
 		"This is Cloudflare AI Gateway Guardrails in action. Policy enforcement happens before any model inference using Cloudflare's own safety classifier."
+	].join("\n");
+}
+
+function buildInjectionBlockResponse(): string {
+	return [
+		"💉 **AI Gateway — Prompt Injection Blocked**",
+		"",
+		"Your request was identified as a prompt injection or jailbreak attempt.",
+		"",
+		"**REASON:** Attempted to override system instructions or extract internal configuration.",
+		"**CATEGORY:** Prompt Injection / Jailbreak detected by Llama Guard 3.",
+		"**ACTION TAKEN:** Request blocked — model integrity preserved.",
+		"",
+		"This is Cloudflare AI Gateway Guardrails protecting against prompt injection attacks. The model never received the manipulation attempt."
 	].join("\n");
 }
 
@@ -184,6 +210,8 @@ async function handleChatRequest(
 				let blockContent = "";
 				if (predictedBlockReason === "dlp") {
 					blockContent = buildDlpBlockResponse();
+				} else if (predictedBlockReason === "injection") {
+					blockContent = buildInjectionBlockResponse();
 				} else if (predictedBlockReason === "guardrails") {
 					blockContent = buildGuardrailsBlockResponse();
 				} else {
