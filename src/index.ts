@@ -169,7 +169,7 @@ async function handleChatRequest(
 	env: Env,
 ): Promise<Response> {
 	try {
-		const { messages = [] } = (await request.json()) as {
+		const { messages = [], model } = (await request.json()) as {
 			messages: ChatMessage[];
 			model?: string;
 		};
