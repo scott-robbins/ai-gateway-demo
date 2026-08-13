@@ -206,6 +206,16 @@
 	</header>
 	<div class="main-container">
 		<aside class="sidebar">
+			<h2>🔀 Provider Routing</h2>
+			<div style="margin-bottom: 20px; padding: 12px; background: #2a2a2a; border: 1px solid #444; border-radius: 8px;">
+				<label for="provider-select" style="display: block; font-size: 12px; color: #F38020; margin-bottom: 8px; font-weight: 600;">Select Model Provider</label>
+				<select id="provider-select" style="width: 100%; background: #0f0f0f; color: #e8e8e8; border: 1px solid #444; padding: 8px 10px; border-radius: 6px; font-size: 13px; cursor: pointer;">
+					<option value="anthropic/claude-haiku-4-5">Anthropic Haiku 4.5</option>
+					<option value="openai/gpt-4o-mini">OpenAI GPT-4o Mini</option>
+					<option value="workers-ai/@cf/meta/llama-3.1-8b-instruct-fp8">Workers AI Llama 3.1</option>
+				</select>
+				<p style="font-size: 11px; color: #666; margin-top: 8px;">All prompts route through selected provider</p>
+			</div>
 			<h2>Try These Demos</h2>
 			<button class="demo-button" data-prompt="Hello! What can you do?">
 				<span class="label">💬 Normal Chat</span>
