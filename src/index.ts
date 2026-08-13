@@ -100,6 +100,19 @@ function buildInjectionBlockResponse(): string {
 	].join("\n");
 }
 
+function buildRateLimitBlockResponse(): string {
+	return [
+		"⏱️ **AI Gateway — Rate Limit Enforced**",
+		"",
+		"Your request exceeded the configured rate limit on this gateway.",
+		"",
+		"**REASON:** Request quota reached for the current time window.",
+		"**LIMIT:** 5 requests per minute (fixed window).",
+		"**ACTION TAKEN:** Request rejected at the gateway — model was never invoked.",
+		"",
+		"This is Cloudflare AI Gateway Rate Limiting in action. Cost controls and abuse prevention enforced BEFORE any inference cost is incurred. Wait 60 seconds and try again."
+	].join("\n");
+}
 function buildGenericBlockResponse(): string {
 	return [
 		"⚠️ **AI Gateway — Request Blocked**",
@@ -206,6 +219,17 @@ async function handleChatRequest(
 
 			// Check if this is a security block (DLP or Guardrails)
 			const isSecurityBlock = gatewayResponse.status === 424 || errorText.includes("2016") || errorText.includes("security configurations");
+			// Check if this is a rate limit block
+			if (gatewayResponse.status === 429) {
+				return new Response(buildSSEChunk(buildRateLimitBlockResponse()), {
+					headers: {
+						"content-type": "text/event-stream; charset=utf-8",
+						"cache-control": "no-cache",
+						connection: "keep-alive",
+						"x-gateway-block": "true",
+					},
+				});
+			}
 
 			if (isSecurityBlock) {
 				let blockContent = "";
