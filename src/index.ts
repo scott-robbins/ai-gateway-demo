@@ -171,6 +171,7 @@ async function handleChatRequest(
 	try {
 		const { messages = [] } = (await request.json()) as {
 			messages: ChatMessage[];
+			model?: string;
 		};
 
 		if (!messages.some((msg) => msg.role === "system")) {
@@ -183,7 +184,7 @@ async function handleChatRequest(
 		console.log("[WORKER CLASSIFY] Predicted block reason if Gateway blocks: " + predictedBlockReason);
 
 		const requestBody = {
-			model: DEFAULT_MODEL,
+			model: model || DEFAULT_MODEL,
 			messages,
 			max_tokens: 1024,
 			stream: true,
