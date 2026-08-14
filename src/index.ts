@@ -208,13 +208,13 @@ async function handleChatRequest(
 		  "Authorization": "Bearer " + (env.CF_API_TOKEN || ""),
 		};
 
-		// Auto-inject user identity metadata for User Insights attribution
+		// Auto-inject custom metadata for request tagging and filtering
         gatewayHeaders["cf-aig-metadata"] = JSON.stringify({
-            userId: "scott.robbins",
-            role: "presenter",
-            session: "iadb-workshop-prep"
-        });
-        console.log("[WORKER METADATA] Attributing request to user: scott.robbins");
+		    team: "iadb-demo",
+		    environment: "workshop-prep",
+		    presenter: "scott.robbins"
+		});
+        console.log("[WORKER METADATA] Tagging request with demo metadata");
 		
 		// Auto-inject cache-skip for dynamic routes (failover demos)
 		if (requestBody.model && requestBody.model.startsWith("dynamic/")) {
