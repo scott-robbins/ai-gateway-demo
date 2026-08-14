@@ -203,13 +203,21 @@ async function handleChatRequest(
 			stream: true,
 		};
 
+		const gatewayHeaders: Record<string, string> = {
+		  "Content-Type": "application/json",
+		  "Authorization": "Bearer " + (env.CF_API_TOKEN || ""),
+		};
+		
+		// Auto-inject cache-skip for dynamic routes (failover demos)
+		if (requestBody.model && requestBody.model.startsWith("dynamic/")) {
+		  gatewayHeaders["cf-aig-skip-cache"] = "true";
+		  console.log("[WORKER CACHE] Skipping cache for dynamic route: " + requestBody.model);
+		}
+		
 		const gatewayResponse = await fetch(AI_GATEWAY_ENDPOINT, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-				"Authorization": "Bearer " + (env.CF_API_TOKEN || ""),
-			},
-			body: JSON.stringify(requestBody),
+		  method: "POST",
+		  headers: gatewayHeaders,
+		  body: JSON.stringify(requestBody),
 		});
 
 		// Handle AI Gateway block responses (status 424, error code 2016)
