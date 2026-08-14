@@ -210,6 +210,7 @@ async function handleChatRequest(
 
 		// Auto-inject custom metadata for request tagging and filtering
         gatewayHeaders["cf-aig-metadata"] = JSON.stringify({
+			userId: "scott.robbins",
 		    team: "iadb-demo",
 		    environment: "workshop-prep",
 		    presenter: "scott.robbins"
