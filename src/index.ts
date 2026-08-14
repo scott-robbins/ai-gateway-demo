@@ -210,7 +210,7 @@ async function handleChatRequest(
 
 		// Auto-inject user identity metadata for User Insights attribution
         gatewayHeaders["cf-aig-metadata"] = JSON.stringify({
-            user_id: "scott.robbins",
+            userId: "scott.robbins",
             role: "presenter",
             session: "iadb-workshop-prep"
         });
