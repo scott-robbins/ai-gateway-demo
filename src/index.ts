@@ -234,13 +234,14 @@ async function handleChatRequest(
 		};
 
 		// Auto-inject custom metadata for request tagging and filtering
-        gatewayHeaders["cf-aig-metadata"] = JSON.stringify({
-			userId: "scott.robbins",
-		    team: "iadb-demo",
-		    environment: "workshop-prep",
-		    presenter: "scott.robbins"
+        const authenticatedEmail = request.headers.get("Cf-Access-Authenticated-User-Email") || "unauthenticated";
+		gatewayHeaders["cf-aig-metadata"] = JSON.stringify({
+			userId: authenticatedEmail,
+			team: "iadb-demo",
+			environment: "workshop-prep",
+			presenter: authenticatedEmail
 		});
-        console.log("[WORKER METADATA] Tagging request with demo metadata");
+		console.log("[WORKER METADATA] Tagging request with authenticated user: " + authenticatedEmail);
 		
 		// Auto-inject cache-skip for dynamic routes (failover demos)
 		if (requestBody.model && requestBody.model.startsWith("dynamic/")) {
