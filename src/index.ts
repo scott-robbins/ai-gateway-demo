@@ -235,11 +235,15 @@ async function handleChatRequest(
 
 		// Auto-inject custom metadata for request tagging and filtering
         const authenticatedEmail = request.headers.get("Cf-Access-Authenticated-User-Email") || "unauthenticated";
+		const authenticatedUserId = request.headers.get("Cf-Access-Authenticated-User-Id") || "unknown";
+		
 		gatewayHeaders["cf-aig-metadata"] = JSON.stringify({
-			userId: authenticatedEmail,
-			team: "iadb-demo",
-			environment: "workshop-prep",
-			presenter: authenticatedEmail
+		    userId: authenticatedEmail,
+		    cf_access_user_id: authenticatedUserId,
+		    email: authenticatedEmail,
+		    team: "iadb-demo",
+		    environment: "workshop-prep",
+		    presenter: authenticatedEmail
 		});
 		console.log("[WORKER METADATA] Tagging request with authenticated user: " + authenticatedEmail);
 		
