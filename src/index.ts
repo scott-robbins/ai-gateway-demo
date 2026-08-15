@@ -100,18 +100,43 @@ function buildInjectionBlockResponse(): string {
 	].join("\n");
 }
 
-function buildRateLimitBlockResponse(): string {
-	return [
-		"⏱️ **AI Gateway — Rate Limit Enforced**",
-		"",
-		"Your request exceeded the configured rate limit on this gateway.",
-		"",
-		"**REASON:** Request quota reached for the current time window.",
-		"**LIMIT:** 5 requests per minute (fixed window).",
-		"**ACTION TAKEN:** Request rejected at the gateway — model was never invoked.",
-		"",
-		"This is Cloudflare AI Gateway Rate Limiting in action. Cost controls and abuse prevention enforced BEFORE any inference cost is incurred. Wait 60 seconds and try again."
-	].join("\n");
+function buildRateLimitBlockResponse(model?: string): string {
+    const isDynamicRateLimit = model === "dynamic/rate-limit-demo";
+    const isDynamicBudgetLimit = model === "dynamic/budget-limit-demo";
+
+    let title, reason, limit, actionTaken, footer;
+
+    if (isDynamicRateLimit) {
+        title = "⏱️ **AI Gateway — Dynamic Route Rate Limit Enforced**";
+        reason = "**REASON:** Per-user request quota reached on the Dynamic Route.";
+        limit = "**LIMIT:** 3 requests per minute per user (sliding window, keyed on metadata.userId).";
+        actionTaken = "**ACTION TAKEN:** Request rejected at the Dynamic Route Rate Limit node — model was never invoked.";
+        footer = "This is Cloudflare AI Gateway Dynamic Route Rate Limiting in action. Per-user cost controls enforced BEFORE any inference cost is incurred. Wait 60 seconds and try again.";
+    } else if (isDynamicBudgetLimit) {
+        title = "💰 **AI Gateway — Dynamic Route Budget Limit Enforced**";
+        reason = "**REASON:** Per-user spend threshold reached on the Dynamic Route.";
+        limit = "**LIMIT:** $1.00 per minute per user (sliding window, keyed on metadata.userId).";
+        actionTaken = "**ACTION TAKEN:** Request rejected at the Dynamic Route Budget Limit node — model was never invoked.";
+        footer = "This is Cloudflare AI Gateway Dynamic Route Budget Limiting in action. Per-user financial governance enforced BEFORE any additional inference cost is incurred. Wait 60 seconds and try again.";
+    } else {
+        title = "⏱️ **AI Gateway — Rate Limit Enforced**";
+        reason = "**REASON:** Request quota reached for the current time window.";
+        limit = "**LIMIT:** 5 requests per minute (fixed window).";
+        actionTaken = "**ACTION TAKEN:** Request rejected at the gateway — model was never invoked.";
+        footer = "This is Cloudflare AI Gateway Rate Limiting in action. Cost controls and abuse prevention enforced BEFORE any inference cost is incurred. Wait 60 seconds and try again.";
+    }
+
+    return [
+        title,
+        "",
+        "Your request exceeded the configured limit on this gateway.",
+        "",
+        reason,
+        limit,
+        actionTaken,
+        "",
+        footer
+    ].join("\n");
 }
 function buildGenericBlockResponse(): string {
 	return [
@@ -238,7 +263,7 @@ async function handleChatRequest(
 			const isSecurityBlock = gatewayResponse.status === 424 || errorText.includes("2016") || errorText.includes("security configurations");
 			// Check if this is a rate limit block
 			if (gatewayResponse.status === 429) {
-				return new Response(buildSSEChunk(buildRateLimitBlockResponse()), {
+			    return new Response(buildSSEChunk(buildRateLimitBlockResponse(requestBody.model)), {
 					headers: {
 						"content-type": "text/event-stream; charset=utf-8",
 						"cache-control": "no-cache",
