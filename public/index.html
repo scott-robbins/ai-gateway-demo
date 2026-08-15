@@ -223,6 +223,10 @@
 				        <option value="dynamic/failover-demo">Path B: All Providers Healthy</option>
 				        <option value="dynamic/failover-demo-anthropic-down">Path B: Anthropic Down → OpenAI</option>
 				    </optgroup>
+			        <optgroup label="— Dynamic Routes (Governance) —" style="background: #1a1a1a; color: #F38020;">
+			            <option value="dynamic/rate-limit-demo">Governance: Rate Limit (3 req/min per user)</option>
+			            <option value="dynamic/budget-limit-demo">Governance: Budget Limit ($1/min per user)</option>
+			        </optgroup>
 				</select>
 				<p style="font-size: 11px; color: #666; margin-top: 8px;">Direct providers use compat endpoint. Dynamic routes demonstrate failover with cache-skip enabled.</p>
 			</div>
