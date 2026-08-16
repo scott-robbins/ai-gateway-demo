@@ -224,11 +224,23 @@
 				        <option value="dynamic/failover-demo-anthropic-down">Path B: Anthropic Down → OpenAI</option>
 				    </optgroup>
 			        <optgroup label="— Dynamic Routes (Governance) —" style="background: #1a1a1a; color: #F38020;">
-			            <option value="dynamic/rate-limit-demo">Governance: Rate Limit (3 req/min per user)</option>
-			            <option value="dynamic/budget-limit-demo">Governance: Budget Limit ($1/min per user)</option>
-			        </optgroup>
+					    <option value="dynamic/rate-limit-demo">Governance: Rate Limit (3 req/min per user)</option>
+					    <option value="dynamic/budget-limit-demo">Governance: Budget Limit ($1/min per user)</option>
+					</optgroup>
+					<optgroup label="— Dynamic Routes (Metadata Routing) —" style="background: #1a1a1a; color: #F38020;">
+					    <option value="dynamic/tier-based-routing-demo">Metadata: Tier-Based Routing (user_plan)</option>
+					</optgroup>
 				</select>
-				<p style="font-size: 11px; color: #666; margin-top: 8px;">Direct providers use compat endpoint. Dynamic routes demonstrate failover with cache-skip enabled.</p>
+			    <p style="font-size: 11px; color: #666; margin-top: 8px;">Direct providers use compat endpoint. Dynamic routes demonstrate failover with cache-skip enabled.</p>
+			
+			    <label for="user-plan-select" style="display: block; font-size: 12px; color: #F38020; margin-top: 16px; margin-bottom: 8px; font-weight: 600;">User Plan (for Tier-Based Routing)</label>
+			    <select id="user-plan-select" style="width: 100%; background: #0f0f0f; color: #e8e8e8; border: 1px solid #444; padding: 8px 10px; border-radius: 6px; font-size: 13px; cursor: pointer;">
+			        <option value="">— No metadata sent (defaults to Workers AI) —</option>
+			        <option value="premium">Premium → Anthropic Claude Haiku 4.5</option>
+			        <option value="standard">Standard → OpenAI GPT-4o Mini</option>
+			        <option value="internal">Internal → Workers AI Llama 3.1</option>
+			    </select>
+			    <p style="font-size: 11px; color: #666; margin-top: 8px;">Only applies when Tier-Based Routing is selected above. Metadata flows via cf-aig-metadata header.</p>
 			</div>
 			<h2>Try These Demos</h2>
 			<button class="demo-button" data-prompt="Hello! What can you do?">
