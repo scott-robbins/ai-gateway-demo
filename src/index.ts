@@ -207,7 +207,7 @@ async function handleChatRequest(
 	env: Env,
 ): Promise<Response> {
 	try {
-		const { messages = [], model } = (await request.json()) as {
+		const { messages = [], model, userPlan } = (await request.json()) as {
 			messages: ChatMessage[];
 			model?: string;
 			userPlan?: string;
