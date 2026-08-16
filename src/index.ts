@@ -210,6 +210,7 @@ async function handleChatRequest(
 		const { messages = [], model } = (await request.json()) as {
 			messages: ChatMessage[];
 			model?: string;
+			userPlan?: string;
 		};
 
 		if (!messages.some((msg) => msg.role === "system")) {
@@ -237,15 +238,22 @@ async function handleChatRequest(
         const authenticatedEmail = request.headers.get("Cf-Access-Authenticated-User-Email") || "unauthenticated";
 		const authenticatedUserId = request.headers.get("Cf-Access-Authenticated-User-Id") || "unknown";
 		
-		gatewayHeaders["cf-aig-metadata"] = JSON.stringify({
+		const metadataPayload: any = {
 		    userId: authenticatedEmail,
 		    cf_access_user_id: authenticatedUserId,
 		    email: authenticatedEmail,
 		    team: "iadb-demo",
 		    environment: "workshop-prep",
 		    presenter: authenticatedEmail
-		});
-		console.log("[WORKER METADATA] Tagging request with authenticated user: " + authenticatedEmail);
+		};
+		
+		// Add user_plan field ONLY if tier-based routing is selected (from sidebar dropdown)
+		if (userPlan) {
+		    metadataPayload.user_plan = userPlan;
+		}
+		
+		gatewayHeaders["cf-aig-metadata"] = JSON.stringify(metadataPayload);
+		console.log("[WORKER METADATA] Tagging request with authenticated user: " + authenticatedEmail + (userPlan ? " | user_plan: " + userPlan : " | no user_plan"));
 		
 		// Auto-inject cache-skip for dynamic routes (failover demos)
 		if (requestBody.model && requestBody.model.startsWith("dynamic/")) {
