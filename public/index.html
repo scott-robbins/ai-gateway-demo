@@ -353,10 +353,11 @@
 				const res = await fetch("/api/chat", {
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({ 
-							messages: conversationHistory,
-							model: document.getElementById("provider-select").value
-						})
+					body: JSON.stringify({
+					    model: document.getElementById("provider-select").value,
+					    userPlan: document.getElementById("user-plan-select").value || null,
+					    messages: conversationHistory,
+					}),
 				});
 
 				if (!res.ok) {
