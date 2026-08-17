@@ -239,12 +239,10 @@ async function handleChatRequest(
 		const authenticatedUserId = request.headers.get("Cf-Access-Authenticated-User-Id") || "unknown";
 		
 		const metadataPayload: any = {
-		    userId: authenticatedEmail,
-		    cf_access_user_id: authenticatedUserId,
-		    email: authenticatedEmail,
-		    team: "iadb-demo",
-		    environment: "workshop-prep",
-		    presenter: authenticatedEmail
+			userId: authenticatedEmail,
+			team: "iadb-demo",
+			environment: "workshop-prep",
+			presenter: authenticatedEmail
 		};
 		
 		// Add user_plan field ONLY if tier-based routing is selected (from sidebar dropdown)
