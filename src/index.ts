@@ -235,21 +235,23 @@ async function handleChatRequest(
 		};
 
 		// Auto-inject custom metadata for request tagging and filtering
-        const authenticatedEmail = request.headers.get("Cf-Access-Authenticated-User-Email") || "unauthenticated";
-		const authenticatedUserId = request.headers.get("Cf-Access-Authenticated-User-Id") || "unknown";
-		
+		const authenticatedEmail = request.headers.get("Cf-Access-Authenticated-User-Email") || "unauthenticated";
+
+		const authenticatedUserId = request.headers.get("Cf-Access-Authenticated-User-Id") 
+			|| "worker-injected:" + authenticatedEmail;
+
 		const metadataPayload: any = {
 			userId: authenticatedEmail,
+			cf_access_user_id: authenticatedUserId,
 			team: "iadb-demo",
-			environment: "workshop-prep",
-			presenter: authenticatedEmail
+			session_id: crypto.randomUUID()
 		};
-		
-		// Add user_plan field ONLY if tier-based routing is selected (from sidebar dropdown)
+
+		// user_plan takes the 5th slot when tier-based routing is used
 		if (userPlan) {
-		    metadataPayload.user_plan = userPlan;
+			metadataPayload.user_plan = userPlan;
 		}
-		
+
 		gatewayHeaders["cf-aig-metadata"] = JSON.stringify(metadataPayload);
 		console.log("[WORKER METADATA] Tagging request with authenticated user: " + authenticatedEmail + (userPlan ? " | user_plan: " + userPlan : " | no user_plan"));
 		
