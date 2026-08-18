@@ -365,6 +365,7 @@
 					body: JSON.stringify({
 					    model: document.getElementById("provider-select").value,
 					    userPlan: document.getElementById("user-plan-select").value || null,
+						userTeam: document.getElementById("team-select").value || null,
 					    messages: conversationHistory,
 					}),
 				});
