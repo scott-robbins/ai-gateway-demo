@@ -207,10 +207,11 @@ async function handleChatRequest(
 	env: Env,
 ): Promise<Response> {
 	try {
-		const { messages = [], model, userPlan } = (await request.json()) as {
+		const { messages = [], model, userPlan, userTeam } = (await request.json()) as {
 			messages: ChatMessage[];
 			model?: string;
 			userPlan?: string;
+			userTeam?: string;
 		};
 
 		if (!messages.some((msg) => msg.role === "system")) {
@@ -243,7 +244,7 @@ async function handleChatRequest(
 		const metadataPayload: any = {
 			userId: authenticatedEmail,
 			cf_access_user_id: authenticatedUserId,
-			team: "iadb-demo",
+			team: userTeam || "iadb-demo",
 			session_id: crypto.randomUUID()
 		};
 
@@ -253,7 +254,7 @@ async function handleChatRequest(
 		}
 
 		gatewayHeaders["cf-aig-metadata"] = JSON.stringify(metadataPayload);
-		console.log("[WORKER METADATA] Tagging request with authenticated user: " + authenticatedEmail + (userPlan ? " | user_plan: " + userPlan : " | no user_plan"));
+		console.log("[WORKER METADATA] Tagging request with authenticated user: " + authenticatedEmail + (userPlan ? " | user_plan: " + userPlan : "") + (userTeam ? " | team: " + userTeam : " | team: iadb-demo (default)") + " | session_id: " + metadataPayload.session_id);
 		
 		// Auto-inject cache-skip for dynamic routes (failover demos)
 		if (requestBody.model && requestBody.model.startsWith("dynamic/")) {
