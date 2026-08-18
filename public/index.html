@@ -242,6 +242,14 @@
 			        <option value="internal">Internal → Workers AI Llama 3.1</option>
 			    </select>
 			    <p style="font-size: 11px; color: #666; margin-top: 8px;">Only applies when Tier-Based Routing is selected above. Metadata flows via cf-aig-metadata header.</p>
+				<label for="team-select" style="display: block; font-size: 12px; color: #F38020; margin-top: 16px; margin-bottom: 8px; font-weight: 600;">Team (for Team-Based Routing)</label>
+			<select id="team-select" style="width: 100%; background: #0f0f0f; color: #e8e8e8; border: 1px solid #444; padding: 8px 10px; border-radius: 4px;">
+				<option value="">— No team metadata sent (defaults to Workers AI) —</option>
+				<option value="engineering">Engineering → Anthropic Claude Opus 5</option>
+				<option value="sales">Sales → OpenAI GPT-4o Mini</option>
+				<option value="operations">Operations → Workers AI Llama 3.1</option>
+			</select>
+			<p style="font-size: 11px; color: #666; margin-top: 8px;">Only applies when Team-Based Routing is selected above. Metadata flows via cf-aig-metadata.team field.</p>
 			</div>
 			<h2>Try These Demos</h2>
 			<button class="demo-button" data-prompt="Hello! What can you do?">
