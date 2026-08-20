@@ -239,15 +239,18 @@ async function handleChatRequest(
 		// DIAGNOSTIC: Log all incoming request headers to see what Access is (or isn't) injecting
 		console.log("[WORKER DEBUG] All incoming headers: " + JSON.stringify(Object.fromEntries(request.headers.entries())));
 
-		// EXPERIMENT: Forward Access identity headers to AI Gateway for User Insights attribution
-		const cfAccessUserId = request.headers.get("Cf-Access-Authenticated-User-Id");
-		const cfAccessEmail = request.headers.get("Cf-Access-Authenticated-User-Email");
-		if (cfAccessUserId) {
-			gatewayHeaders["Cf-Access-Authenticated-User-Id"] = cfAccessUserId;
-			console.log("[WORKER ACCESS FORWARD] Forwarding cf-access user id to gateway: " + cfAccessUserId);
-		}
+		// EXPERIMENT: Forward all available Access identity headers to AI Gateway for User Insights attribution
+		const cfAccessEmail = request.headers.get("cf-access-authenticated-user-email");
+		const cfAccessJwt = request.headers.get("cf-access-jwt-assertion");
+
 		if (cfAccessEmail) {
-			gatewayHeaders["Cf-Access-Authenticated-User-Email"] = cfAccessEmail;
+			gatewayHeaders["cf-access-authenticated-user-email"] = cfAccessEmail;
+			console.log("[WORKER ACCESS FORWARD] Forwarding cf-access email to gateway: " + cfAccessEmail);
+		}
+
+		if (cfAccessJwt) {
+			gatewayHeaders["cf-access-jwt-assertion"] = cfAccessJwt;
+			console.log("[WORKER ACCESS FORWARD] Forwarding cf-access JWT to gateway (identity contained in JWT payload)");
 		}
 
 		// Auto-inject custom metadata for request tagging and filtering
