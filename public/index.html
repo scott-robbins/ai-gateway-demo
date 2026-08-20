@@ -290,7 +290,13 @@
 			</select>
 			<p style="font-size: 11px; color: #666; margin-top: 8px;">Only applies when Team-Based Routing is selected above. Metadata flows via cf-aig-metadata.team field.</p>
 			</div>
-			<h2>Try These Demos</h2>
+			<h2>🔒 Privacy Mode</h2>
+			<button id="privacy-toggle" class="privacy-toggle" type="button">
+				<span>Suppress prompt/response storage</span>
+				<span class="state-indicator" id="privacy-state">OFF</span>
+			</button>
+			<p style="font-size: 11px; color: #666; margin-top: -12px; margin-bottom: 20px;">When ON, AI Gateway logs metadata (cost, tokens, provider) but suppresses RequestBody and ResponseBody storage. Ideal for HIPAA, GDPR, and PCI workloads. Header: <code style="background: #0a0a0a; padding: 1px 4px; border-radius: 3px; font-size: 10px;">cf-aig-collect-log-payload: false</code></p>
+						<h2>Try These Demos</h2>
 			<button class="demo-button" data-prompt="Hello! What can you do?">
 				<span class="label">💬 Normal Chat</span>
 				<span class="description">Standard inference through AI Gateway</span>
