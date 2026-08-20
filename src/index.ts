@@ -207,11 +207,12 @@ async function handleChatRequest(
 	env: Env,
 ): Promise<Response> {
 	try {
-		const { messages = [], model, userPlan, userTeam } = (await request.json()) as {
+		const { messages = [], model, userPlan, userTeam, privacyMode } = (await request.json()) as {
 			messages: ChatMessage[];
 			model?: string;
 			userPlan?: string;
 			userTeam?: string;
+			privacyMode?: boolean;
 		};
 
 		if (!messages.some((msg) => msg.role === "system")) {
@@ -255,6 +256,12 @@ async function handleChatRequest(
 
 		gatewayHeaders["cf-aig-metadata"] = JSON.stringify(metadataPayload);
 		console.log("[WORKER METADATA] Tagging request with authenticated user: " + authenticatedEmail + (userPlan ? " | user_plan: " + userPlan : "") + (userTeam ? " | team: " + userTeam : " | team: iadb-demo (default)") + " | session_id: " + metadataPayload.session_id);
+		
+		// Privacy Mode — suppress prompt/response storage in AI Gateway logs
+		if (privacyMode === true) {
+			gatewayHeaders["cf-aig-collect-log-payload"] = "false";
+			console.log("[WORKER PRIVACY] Privacy Mode ENABLED — payload storage suppressed for this request");
+		}
 		
 		// Auto-inject cache-skip for dynamic routes (failover demos)
 		if (requestBody.model && requestBody.model.startsWith("dynamic/")) {
