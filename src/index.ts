@@ -236,6 +236,9 @@ async function handleChatRequest(
 		  "Authorization": "Bearer " + (env.CF_API_TOKEN || ""),
 		};
 
+		// DIAGNOSTIC: Log all incoming request headers to see what Access is (or isn't) injecting
+		console.log("[WORKER DEBUG] All incoming headers: " + JSON.stringify(Object.fromEntries(request.headers.entries())));
+
 		// EXPERIMENT: Forward Access identity headers to AI Gateway for User Insights attribution
 		const cfAccessUserId = request.headers.get("Cf-Access-Authenticated-User-Id");
 		const cfAccessEmail = request.headers.get("Cf-Access-Authenticated-User-Email");
