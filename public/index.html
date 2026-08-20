@@ -361,6 +361,18 @@
                 activeRouteDisplay.textContent = selectedLabel;
             });
         }
+		
+		// Privacy Mode toggle — controls cf-aig-collect-log-payload header
+		let privacyModeEnabled = false;
+		const privacyToggle = document.getElementById("privacy-toggle");
+		const privacyState = document.getElementById("privacy-state");
+		if (privacyToggle && privacyState) {
+			privacyToggle.addEventListener("click", function() {
+				privacyModeEnabled = !privacyModeEnabled;
+				privacyState.textContent = privacyModeEnabled ? "ON" : "OFF";
+				privacyToggle.classList.toggle("active", privacyModeEnabled);
+			});
+		}
 
 		function clearWelcome() {
 			if (!welcomeCleared) {
