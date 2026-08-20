@@ -236,6 +236,17 @@ async function handleChatRequest(
 		  "Authorization": "Bearer " + (env.CF_API_TOKEN || ""),
 		};
 
+		// EXPERIMENT: Forward Access identity headers to AI Gateway for User Insights attribution
+		const cfAccessUserId = request.headers.get("Cf-Access-Authenticated-User-Id");
+		const cfAccessEmail = request.headers.get("Cf-Access-Authenticated-User-Email");
+		if (cfAccessUserId) {
+			gatewayHeaders["Cf-Access-Authenticated-User-Id"] = cfAccessUserId;
+			console.log("[WORKER ACCESS FORWARD] Forwarding cf-access user id to gateway: " + cfAccessUserId);
+		}
+		if (cfAccessEmail) {
+			gatewayHeaders["Cf-Access-Authenticated-User-Email"] = cfAccessEmail;
+		}
+
 		// Auto-inject custom metadata for request tagging and filtering
 		const authenticatedEmail = request.headers.get("Cf-Access-Authenticated-User-Email") || "unauthenticated";
 
@@ -262,7 +273,7 @@ async function handleChatRequest(
 			gatewayHeaders["cf-aig-collect-log-payload"] = "false";
 			console.log("[WORKER PRIVACY] Privacy Mode ENABLED — payload storage suppressed for this request");
 		}
-		
+
 		// Auto-inject cache-skip for dynamic routes (failover demos)
 		if (requestBody.model && requestBody.model.startsWith("dynamic/")) {
 		  gatewayHeaders["cf-aig-skip-cache"] = "true";
