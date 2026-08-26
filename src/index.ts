@@ -14,7 +14,7 @@ import { Env, ChatMessage } from "./types";
 
 const AI_GATEWAY_ACCOUNT_ID = "3746ba19913534b7653b8af6a1299286";
 const AI_GATEWAY_NAME = "ai-gateway-demo";
-const AI_GATEWAY_ENDPOINT = "https://gateway.ai.cloudflare.com/v1/" + AI_GATEWAY_ACCOUNT_ID + "/" + AI_GATEWAY_NAME + "/compat/chat/completions";
+const AI_GATEWAY_ENDPOINT = "https://gateway.jolenesego.com/compat/chat/completions";
 
 const DEFAULT_MODEL = "anthropic/claude-haiku-4-5";
 
