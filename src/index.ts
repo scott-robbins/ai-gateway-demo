@@ -234,6 +234,9 @@ async function handleChatRequest(
 		const gatewayHeaders: Record<string, string> = {
 		  "Content-Type": "application/json",
 		  "Authorization": "Bearer " + (env.CF_API_TOKEN || ""),
+		// Service Token — authenticates the Worker to Access on gateway.jolenesego.com
+		"CF-Access-Client-Id": env.CF_ACCESS_CLIENT_ID || "",
+		"CF-Access-Client-Secret": env.CF_ACCESS_CLIENT_SECRET || "",
 		};
 
 		// DIAGNOSTIC: Log all incoming request headers to see what Access is (or isn't) injecting
