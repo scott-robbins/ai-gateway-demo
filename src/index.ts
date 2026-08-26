@@ -239,6 +239,10 @@ async function handleChatRequest(
 		"CF-Access-Client-Secret": env.CF_ACCESS_CLIENT_SECRET || "",
 		};
 
+		// NEW DEBUG LOGS
+		console.log("[WORKER SERVICE TOKEN DEBUG] Client ID present: " + (env.CF_ACCESS_CLIENT_ID ? "YES len=" + env.CF_ACCESS_CLIENT_ID.length : "NO") + " | Client Secret present: " + (env.CF_ACCESS_CLIENT_SECRET ? "YES len=" + env.CF_ACCESS_CLIENT_SECRET.length : "NO"));
+		console.log("[WORKER OUTBOUND HEADERS] Headers being sent to gateway: " + Object.keys(gatewayHeaders).join(", "));
+
 		// DIAGNOSTIC: Log all incoming request headers to see what Access is (or isn't) injecting
 		console.log("[WORKER DEBUG] All incoming headers: " + JSON.stringify(Object.fromEntries(request.headers.entries())));
 
