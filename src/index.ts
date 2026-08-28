@@ -293,16 +293,10 @@ async function handleChatRequest(
 		  console.log("[WORKER CACHE] Skipping cache for dynamic route: " + requestBody.model);
 		}
 		
-		const gateway = env.AI.gateway(AI_GATEWAY_NAME);
-		const gatewayBaseUrl = await gateway.getUrl();
-		const compatEndpoint = gatewayBaseUrl + "compat/chat/completions";
-
-		console.log("[WORKER BINDING] Using env.AI.gateway() — endpoint: " + compatEndpoint);
-
-		const gatewayResponse = await fetch(compatEndpoint, {
-			method: "POST",
-			headers: gatewayHeaders,
-			body: JSON.stringify(requestBody),
+		const gatewayResponse = await fetch(AI_GATEWAY_ENDPOINT, {
+		  method: "POST",
+		  headers: gatewayHeaders,
+		  body: JSON.stringify(requestBody),
 		});
 
 		// Handle AI Gateway block responses (status 424, error code 2016)
