@@ -27,5 +27,11 @@ export interface Env {
      * Service Token Client Secret for authenticating the Worker to Access-protected AI Gateway custom domain.
      */
     CF_ACCESS_CLIENT_SECRET: string;
+    /**
+     * Default team name for AI Gateway metadata when no team is selected in UI.
+     * Set via Cloudflare Worker environment variable for per-customer demo customization.
+     * Falls back to hardcoded default in index.ts if unset.
+     */
+    DEMO_TEAM_NAME?: string;
 }
 	
