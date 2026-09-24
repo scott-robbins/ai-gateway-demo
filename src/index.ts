@@ -279,7 +279,8 @@ async function handleChatRequest(
 		}
 
 		gatewayHeaders["cf-aig-metadata"] = JSON.stringify(metadataPayload);
-		console.log("[WORKER METADATA] Tagging request with authenticated user: " + authenticatedEmail + (userPlan ? " | user_plan: " + userPlan : "") + (userTeam ? " | team: " + userTeam : " | team: " + (env.DEMO_TEAM_NAME || "mta-subways") + " (default)" | session_id: " + metadataPayload.session_id);
+		console.log("[WORKER METADATA] Tagging request with authenticated user: " + authenticatedEmail + (userPlan ? " | user_plan: " + userPlan : "") + (userTeam ? " | team: " + userTeam : " | team: " + (env.DEMO_TEAM_NAME || "mta-subways") + " (default)") + " | session_id: " + metadataPayload.session_id);
+
 		
 		// Privacy Mode — suppress prompt/response storage in AI Gateway logs
 		if (privacyMode === true) {
