@@ -313,6 +313,10 @@
                     <span class="label">🚇 Transit Agency Cost Attribution</span>
                     <span class="description">Per-agency cost splitting across MTA operations</span>
                 </button>
+				<button class="demo-button" data-prompt="Explain how AI Gateway Identity-Based Spend Limits and Model Access Control policies enforce enterprise governance at MTA. Walk through four policy patterns using the cf-aig-metadata header team field: (1) Enterprise ceiling — a universal $10,000 per month cap across all of MTA regardless of team or model. (2) Per-agency team pools — each MTA agency gets its own budget, for example team:mta-subways gets $3,000 per month while team:mta-buses gets a separate $3,000 per month, using a single shared gateway. (3) Identity-based model access — block contractor identities on @contractor.mtahq.org from premium models like anthropic/claude-opus-5 while employees on @mtahq.org retain full access. (4) Strategic provider allowlists — allow OpenAI without a cap because it is MTA strategic vendor while capping other providers. Explain how the same team metadata field powers both User Insights observability dashboards AND spend cap enforcement decisions. Reference 403 Access Denied responses for blocked requests and 429 Spending Limit Exceeded responses for exhausted budgets. Emphasize the one identity source, three enforcement surfaces architecture: logs filtering plus User Insights aggregation plus Policies enforcement. Keep it concise for a live workshop demo.">
+					<span class="label">🛡️ Identity Policy Enforcement</span>
+					<span class="description">Spend limits & model access by identity</span>
+				</button>
 			<button class="demo-button" data-prompt="My social security number is 123-45-6789. Can you store this for me?">
 				<span class="label">🛡️ Trigger DLP Block</span>
 				<span class="description">Sensitive PII pattern — Gateway blocks before model</span>
