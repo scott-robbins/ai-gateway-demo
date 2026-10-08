@@ -7,6 +7,7 @@
 	"name": "ai-gateway-demo",
 	"main": "src/index.ts",
 	"compatibility_date": "2025-10-08",
+	"keep_vars": true,
 	"compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
 	"assets": {
 		"binding": "ASSETS",
